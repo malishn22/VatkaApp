@@ -7,7 +7,7 @@ import { ClipboardEvent, RefObject } from 'react';
  */
 export function usePairedPaste(
   onPair: (left: string, right: string) => void,
-  focusAfterRef?: RefObject<HTMLInputElement>
+  focusAfterRef?: RefObject<HTMLInputElement | null>
 ): (e: ClipboardEvent<HTMLInputElement>) => void {
   const handlePair = (left: string, right: string) => {
     onPair(left, right);
