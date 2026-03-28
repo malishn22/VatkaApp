@@ -1,0 +1,64 @@
+import { useEffect } from 'react';
+import { useUIStore } from '../../store/uiStore';
+import { useDataStore } from '../../store/dataStore';
+import { Button } from '../shared/Button';
+import { Dropdown } from '../shared/Dropdown';
+import { LevelList } from '../levels/LevelList';
+
+export function Sidebar() {
+  const { selectedLanguageId, setSelectedLanguage, setView, currentView, isDark, toggleDark } = useUIStore();
+  const { languages, levels, fetchLanguages, fetchLevels } = useDataStore();
+
+  useEffect(() => {
+    fetchLanguages();
+  }, []);
+
+  useEffect(() => {
+    if (selectedLanguageId !== null) {
+      fetchLevels(selectedLanguageId);
+    }
+  }, [selectedLanguageId]);
+
+  return (
+    <aside className="w-64 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <h1 className="text-lg font-bold text-indigo-700 dark:text-indigo-400 mb-3">VocabApp</h1>
+        <Dropdown
+          className="w-full"
+          options={languages.map((l) => ({ value: String(l.id), label: l.name }))}
+          placeholder="Select language..."
+          value={String(selectedLanguageId ?? '')}
+          onChange={(val) => setSelectedLanguage(val ? Number(val) : null)}
+        />
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-3">
+        {selectedLanguageId !== null && (
+          <LevelList
+            levels={levels.filter((l) => l.language_id === selectedLanguageId)}
+            languageId={selectedLanguageId}
+          />
+        )}
+      </div>
+
+      <div className="p-3 border-t border-gray-200 dark:border-gray-700 flex flex-col gap-2">
+        <Button
+          variant={currentView === 'languages' ? 'primary' : 'ghost'}
+          className="w-full justify-start"
+          onClick={() => setView('languages')}
+        >
+          Manage Languages
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-2"
+          onClick={toggleDark}
+          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          <span>{isDark ? '☀️' : '🌙'}</span>
+          <span>{isDark ? 'Light mode' : 'Dark mode'}</span>
+        </Button>
+      </div>
+    </aside>
+  );
+}
