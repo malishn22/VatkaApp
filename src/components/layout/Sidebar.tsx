@@ -4,10 +4,12 @@ import { useDataStore } from '../../store/dataStore';
 import { Button } from '../shared/Button';
 import { Dropdown } from '../shared/Dropdown';
 import { LevelList } from '../levels/LevelList';
+import { useT } from '../../i18n/useT';
 
 export function Sidebar() {
-  const { selectedLanguageId, setSelectedLanguage, setView, currentView, isDark, toggleDark } = useUIStore();
+  const { selectedLanguageId, setSelectedLanguage, setView, currentView } = useUIStore();
   const { languages, levels, fetchLanguages, fetchLevels } = useDataStore();
+  const t = useT();
 
   useEffect(() => {
     fetchLanguages();
@@ -22,11 +24,11 @@ export function Sidebar() {
   return (
     <aside className="w-64 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-        <h1 className="text-lg font-bold text-indigo-700 dark:text-indigo-400 mb-3">VocabApp</h1>
+        <h1 className="text-lg font-bold text-indigo-700 dark:text-indigo-400 mb-3">VatkaApp</h1>
         <Dropdown
           className="w-full"
           options={languages.map((l) => ({ value: String(l.id), label: l.name }))}
-          placeholder="Select language..."
+          placeholder={t.selectLanguage}
           value={String(selectedLanguageId ?? '')}
           onChange={(val) => setSelectedLanguage(val ? Number(val) : null)}
         />
@@ -47,16 +49,14 @@ export function Sidebar() {
           className="w-full justify-start"
           onClick={() => setView('languages')}
         >
-          Manage Languages
+          {t.manageLanguages}
         </Button>
         <Button
-          variant="ghost"
+          variant={currentView === 'settings' ? 'primary' : 'ghost'}
           className="w-full justify-start gap-2"
-          onClick={toggleDark}
-          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          onClick={() => setView('settings')}
         >
-          <span>{isDark ? '☀️' : '🌙'}</span>
-          <span>{isDark ? 'Light mode' : 'Dark mode'}</span>
+          ⚙ {t.settings}
         </Button>
       </div>
     </aside>

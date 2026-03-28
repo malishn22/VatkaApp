@@ -3,6 +3,7 @@ import { Layout } from './components/layout/Layout';
 import { LanguagesView } from './components/languages/LanguagesView';
 import { WordPairsView } from './components/wordpairs/WordPairsView';
 import { PlayView } from './components/play/PlayView';
+import { SettingsView } from './components/settings/SettingsView';
 
 function App() {
   const { currentView } = useUIStore();
@@ -12,6 +13,7 @@ function App() {
       {currentView === 'languages' && <LanguagesView />}
       {currentView === 'wordpairs' && <WordPairsView />}
       {currentView === 'play' && <PlayView />}
+      {currentView === 'settings' && <SettingsView />}
     </Layout>
   );
 }

@@ -6,6 +6,7 @@ import { PlayHeader } from './PlayHeader';
 import { WordCard } from './WordCard';
 import { SuccessOverlay } from './SuccessOverlay';
 import { CompletionScreen } from './CompletionScreen';
+import { useT } from '../../i18n/useT';
 
 export function PlayView() {
   const { setView } = useUIStore();
@@ -16,6 +17,7 @@ export function PlayView() {
     roundComplete, gameComplete,
     selectSource, selectTarget, clearWrong, nextRound, initGame,
   } = usePlayStore();
+  const t = useT();
 
   const wrongTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -54,7 +56,7 @@ export function PlayView() {
       <div className="grid grid-cols-2 gap-6">
         {/* Source column */}
         <div className="flex flex-col gap-3">
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center mb-1">Match</p>
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center mb-1">{t.match}</p>
           {currentRound.map((pair) => (
             <WordCard
               key={pair.id}
@@ -69,15 +71,15 @@ export function PlayView() {
 
         {/* Target column (shuffled) */}
         <div className="flex flex-col gap-3">
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center mb-1">With</p>
-          {shuffledTargets.map((t) => (
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center mb-1">{t.with}</p>
+          {shuffledTargets.map((s) => (
             <WordCard
-              key={t.id}
-              text={t.text}
-              isMatched={matched.includes(t.id)}
-              isSelected={selectedTarget === t.id}
+              key={s.id}
+              text={s.text}
+              isMatched={matched.includes(s.id)}
+              isSelected={selectedTarget === s.id}
               isWrong={false}
-              onClick={() => selectTarget(t.id)}
+              onClick={() => selectTarget(s.id)}
             />
           ))}
         </div>
@@ -87,7 +89,6 @@ export function PlayView() {
         <SuccessOverlay
           onNext={() => {
             if (remaining.length === 0) {
-              // signal game complete via nextRound
               nextRound();
             } else {
               nextRound();

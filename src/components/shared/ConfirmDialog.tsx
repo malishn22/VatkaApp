@@ -1,5 +1,6 @@
 import { Modal } from './Modal';
 import { Button } from './Button';
+import { useT } from '../../i18n/useT';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -10,7 +11,8 @@ interface ConfirmDialogProps {
   confirmLabel?: string;
 }
 
-export function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, confirmLabel = 'Delete' }: ConfirmDialogProps) {
+export function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, confirmLabel }: ConfirmDialogProps) {
+  const t = useT();
   return (
     <Modal
       isOpen={isOpen}
@@ -18,8 +20,8 @@ export function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, conf
       title={title}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button variant="danger" onClick={() => { onConfirm(); onClose(); }}>{confirmLabel}</Button>
+          <Button variant="secondary" onClick={onClose}>{t.cancel}</Button>
+          <Button variant="danger" onClick={() => { onConfirm(); onClose(); }}>{confirmLabel ?? t.confirmDelete}</Button>
         </>
       }
     >

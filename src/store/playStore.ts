@@ -71,8 +71,8 @@ export const usePlayStore = create<PlayState>((set, get) => {
     },
 
     selectSource: (id) => {
-      const { selectedTarget, wrongPair, matched } = get();
-      if (wrongPair !== null || matched.includes(id)) return;
+      const { selectedTarget, matched } = get();
+      if (matched.includes(id)) return;
       if (selectedTarget !== null) {
         applyMatch(id, selectedTarget);
       } else {
@@ -81,8 +81,8 @@ export const usePlayStore = create<PlayState>((set, get) => {
     },
 
     selectTarget: (id) => {
-      const { selectedSource, wrongPair, matched } = get();
-      if (wrongPair !== null || matched.includes(id)) return;
+      const { selectedSource, matched } = get();
+      if (matched.includes(id)) return;
       if (selectedSource !== null) {
         applyMatch(selectedSource, id);
       } else {

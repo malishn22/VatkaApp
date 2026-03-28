@@ -5,6 +5,8 @@ import { ConfirmDialog } from '../shared/ConfirmDialog';
 import { AddEditLevelModal } from './AddEditLevelModal';
 import { Button } from '../shared/Button';
 import type { Level } from '../../types';
+import { useT } from '../../i18n/useT';
+import { PencilIcon, TrashIcon } from '../shared/Icons';
 
 interface LevelItemProps {
   level: Level;
@@ -13,6 +15,7 @@ interface LevelItemProps {
 export function LevelItem({ level }: LevelItemProps) {
   const { selectedLevelId, setSelectedLevel, setView } = useUIStore();
   const { deleteLevel } = useDataStore();
+  const t = useT();
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
@@ -37,17 +40,17 @@ export function LevelItem({ level }: LevelItemProps) {
             variant="icon"
             hoverColor="indigo"
             onClick={(e) => { e.stopPropagation(); setShowEdit(true); }}
-            title="Edit"
+            title={t.edit}
           >
-            ✎
+            <PencilIcon />
           </Button>
           <Button
             variant="icon"
             hoverColor="red"
             onClick={(e) => { e.stopPropagation(); setShowDelete(true); }}
-            title="Delete"
+            title={t.delete}
           >
-            ✕
+            <TrashIcon />
           </Button>
         </span>
       </div>
@@ -63,8 +66,8 @@ export function LevelItem({ level }: LevelItemProps) {
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}
         onConfirm={() => deleteLevel(level.id)}
-        title="Delete Level"
-        message={`Delete "${level.name}"? All word pairs in this level will also be deleted.`}
+        title={t.deleteLevelTitle}
+        message={t.deleteLevelMessage(level.name)}
       />
     </>
   );

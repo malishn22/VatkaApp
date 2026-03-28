@@ -1,8 +1,7 @@
 import { Dropdown } from '../shared/Dropdown';
 import { Input } from '../shared/Input';
 import { KNOWN_LANGUAGES } from '../../constants/languages';
-
-const languageOptions = KNOWN_LANGUAGES.map((lang) => ({ value: lang, label: lang }));
+import { useT } from '../../i18n/useT';
 
 interface LanguageFormFieldsProps {
   source: string;
@@ -19,6 +18,9 @@ export function LanguageFormFields({
   onSourceChange, onTargetChange, onNameChange,
   errors = {},
 }: LanguageFormFieldsProps) {
+  const t = useT();
+  const languageOptions = KNOWN_LANGUAGES.map((lang) => ({ value: lang, label: t.languageNames[lang] ?? lang }));
+
   const handleSourceChange = (v: string) => {
     onSourceChange(v);
     // Auto-generate name if not manually edited
@@ -35,24 +37,24 @@ export function LanguageFormFields({
   return (
     <div className="flex flex-col gap-3">
       <Dropdown
-        label="From language"
+        label={t.fromLanguage}
         options={languageOptions}
-        placeholder="Select source language..."
+        placeholder={t.selectSourceLanguage}
         value={source}
         onChange={handleSourceChange}
         error={errors.source}
       />
       <Dropdown
-        label="To language"
+        label={t.toLanguage}
         options={languageOptions}
-        placeholder="Select target language..."
+        placeholder={t.selectTargetLanguage}
         value={target}
         onChange={handleTargetChange}
         error={errors.target}
       />
       <Input
-        label="Display name"
-        placeholder="e.g. English → Czech"
+        label={t.displayName}
+        placeholder={t.displayNamePlaceholder}
         value={name}
         onChange={(e) => onNameChange(e.target.value)}
         error={errors.name}

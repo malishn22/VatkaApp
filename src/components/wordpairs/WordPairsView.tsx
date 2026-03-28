@@ -5,11 +5,13 @@ import { usePlayStore } from '../../store/playStore';
 import { WordPairRow } from './WordPairRow';
 import { AddWordPairForm } from './AddWordPairForm';
 import { Button } from '../shared/Button';
+import { useT } from '../../i18n/useT';
 
 export function WordPairsView() {
   const { selectedLevelId, selectedLanguageId, setView } = useUIStore();
   const { levels, languages, wordPairs, fetchWordPairs } = useDataStore();
   const { initGame } = usePlayStore();
+  const t = useT();
 
   const level = levels.find((l) => l.id === selectedLevelId);
   const language = languages.find((l) => l.id === selectedLanguageId);
@@ -29,31 +31,33 @@ export function WordPairsView() {
   if (!level) {
     return (
       <div className="text-center py-16 text-gray-400 dark:text-gray-500">
-        <p>Select a level from the sidebar</p>
+        <p>{t.selectLevelFromSidebar}</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{language?.name}</p>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50">{level.name}</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{wordPairs.length} word pair{wordPairs.length !== 1 ? 's' : ''}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {wordPairs.length} {wordPairs.length !== 1 ? t.wordPairs : t.wordPair}
+          </p>
         </div>
         <Button
           onClick={handlePlay}
           disabled={wordPairs.length < 2}
-          title={wordPairs.length < 2 ? 'Need at least 2 word pairs to play' : ''}
+          title={wordPairs.length < 2 ? t.needAtLeastTwoWordPairs : ''}
         >
-          ▶ Play
+          {t.play}
         </Button>
       </div>
 
       {wordPairs.length === 0 ? (
         <div className="text-center py-8 text-gray-400 dark:text-gray-500">
-          <p>No word pairs yet. Add some below.</p>
+          <p>{t.noWordPairsYet}</p>
         </div>
       ) : (
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
@@ -61,10 +65,10 @@ export function WordPairsView() {
             <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
               <tr>
                 <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                  {language?.source ?? 'Source'}
+                  {language?.source ?? t.source}
                 </th>
                 <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                  {language?.target ?? 'Target'}
+                  {language?.target ?? t.target}
                 </th>
                 <th className="px-4 py-2.5" />
               </tr>
@@ -80,8 +84,8 @@ export function WordPairsView() {
 
       <AddWordPairForm
         levelId={level.id}
-        sourceLabel={language?.source ?? 'Source'}
-        targetLabel={language?.target ?? 'Target'}
+        sourceLabel={language?.source ?? t.source}
+        targetLabel={language?.target ?? t.target}
       />
     </div>
   );

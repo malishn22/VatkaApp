@@ -4,6 +4,7 @@ import { Input } from '../shared/Input';
 import { Button } from '../shared/Button';
 import { useDataStore } from '../../store/dataStore';
 import type { Level } from '../../types';
+import { useT } from '../../i18n/useT';
 
 interface AddEditLevelModalProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface AddEditLevelModalProps {
 
 export function AddEditLevelModal({ isOpen, onClose, languageId, level }: AddEditLevelModalProps) {
   const { addLevel, updateLevel, levels } = useDataStore();
+  const t = useT();
   const [name, setName] = useState('');
   const [error, setError] = useState('');
 
@@ -25,7 +27,7 @@ export function AddEditLevelModal({ isOpen, onClose, languageId, level }: AddEdi
   }, [isOpen, level]);
 
   const handleSubmit = async () => {
-    if (!name.trim()) { setError('Name is required'); return; }
+    if (!name.trim()) { setError(t.nameIsRequired); return; }
     if (level) {
       await updateLevel(level.id, { name: name.trim() });
     } else {
@@ -38,17 +40,17 @@ export function AddEditLevelModal({ isOpen, onClose, languageId, level }: AddEdi
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={level ? 'Edit Level' : 'Add Level'}
+      title={level ? t.editLevelTitle : t.addLevelTitle}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSubmit}>{level ? 'Save' : 'Add'}</Button>
+          <Button variant="secondary" onClick={onClose}>{t.cancel}</Button>
+          <Button onClick={handleSubmit}>{level ? t.save : t.add}</Button>
         </>
       }
     >
       <Input
-        label="Level name"
-        placeholder="e.g. Beginner, A1, Unit 3"
+        label={t.levelName}
+        placeholder={t.levelNamePlaceholder}
         value={name}
         onChange={(e) => setName(e.target.value)}
         error={error}

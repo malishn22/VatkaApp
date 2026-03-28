@@ -1,4 +1,5 @@
 import { Button } from '../shared/Button';
+import { useT } from '../../i18n/useT';
 
 interface PlayHeaderProps {
   total: number;
@@ -9,15 +10,16 @@ interface PlayHeaderProps {
 }
 
 export function PlayHeader({ total, remaining, currentRoundSize, matched, onExit }: PlayHeaderProps) {
+  const t = useT();
   const done = total - remaining - currentRoundSize + matched;
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
   return (
     <div className="flex items-center gap-4 mb-6">
-      <Button variant="text" textColor="default" size="sm" onClick={onExit}>← Back</Button>
+      <Button variant="text" textColor="default" size="sm" onClick={onExit}>{t.back}</Button>
       <div className="flex-1">
         <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
-          <span>Progress</span>
+          <span>{t.progress}</span>
           <span>{done}/{total}</span>
         </div>
         <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">

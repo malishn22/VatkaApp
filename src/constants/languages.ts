@@ -1,7 +1,8 @@
 export const KNOWN_LANGUAGES = [
+  'English', 'Czech', 'Turkish',
   'Afrikaans', 'Albanian', 'Arabic', 'Basque', 'Belarusian',
   'Bulgarian', 'Catalan', 'Chinese (Simplified)', 'Chinese (Traditional)',
-  'Croatian', 'Czech', 'Danish', 'Dutch', 'English', 'Estonian',
+  'Croatian', 'Danish', 'Dutch', 'Estonian',
   'Finnish', 'French', 'Galician', 'Georgian', 'German', 'Greek',
   'Gujarati', 'Haitian Creole', 'Hebrew', 'Hindi', 'Hungarian',
   'Icelandic', 'Indonesian', 'Irish', 'Italian', 'Japanese',

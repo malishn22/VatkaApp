@@ -3,6 +3,7 @@ import { Modal } from '../shared/Modal';
 import { Button } from '../shared/Button';
 import { LanguageFormFields } from './LanguageFormFields';
 import { useDataStore } from '../../store/dataStore';
+import { useT } from '../../i18n/useT';
 
 interface AddLanguageModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface AddLanguageModalProps {
 
 export function AddLanguageModal({ isOpen, onClose }: AddLanguageModalProps) {
   const { addLanguage } = useDataStore();
+  const t = useT();
   const [source, setSource] = useState('');
   const [target, setTarget] = useState('');
   const [name, setName] = useState('');
@@ -23,10 +25,10 @@ export function AddLanguageModal({ isOpen, onClose }: AddLanguageModalProps) {
 
   const validate = () => {
     const e: typeof errors = {};
-    if (!source) e.source = 'Required';
-    if (!target) e.target = 'Required';
-    if (source && target && source === target) { e.target = 'Must differ from source'; }
-    if (!name.trim()) e.name = 'Required';
+    if (!source) e.source = t.required;
+    if (!target) e.target = t.required;
+    if (source && target && source === target) { e.target = t.mustDifferFromSource; }
+    if (!name.trim()) e.name = t.required;
     return e;
   };
 
@@ -45,11 +47,11 @@ export function AddLanguageModal({ isOpen, onClose }: AddLanguageModalProps) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add Language"
+      title={t.addLanguageTitle}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSubmit}>Add</Button>
+          <Button variant="secondary" onClick={onClose}>{t.cancel}</Button>
+          <Button onClick={handleSubmit}>{t.add}</Button>
         </>
       }
     >
