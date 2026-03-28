@@ -6,6 +6,7 @@ import { WordPairsView } from './components/wordpairs/WordPairsView';
 import { PlayView } from './components/play/PlayView';
 import { SettingsView } from './components/settings/SettingsView';
 import { runMigrations } from './db/client';
+import { DragProvider } from './context/DragContext';
 
 function App() {
   const { currentView } = useUIStore();
@@ -15,12 +16,14 @@ function App() {
   }, []);
 
   return (
+    <DragProvider>
     <Layout>
       {currentView === 'languages' && <LanguagesView />}
       {currentView === 'wordpairs' && <WordPairsView />}
       {currentView === 'play' && <PlayView />}
       {currentView === 'settings' && <SettingsView />}
     </Layout>
+    </DragProvider>
   );
 }
 

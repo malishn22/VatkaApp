@@ -2,16 +2,20 @@ import { useState } from 'react';
 import { useDataStore } from '../../store/dataStore';
 import { Button } from '../shared/Button';
 import { Input } from '../shared/Input';
-import type { WordPair } from '../../types';
+import type { WordPair, Section } from '../../types';
 import { useT } from '../../i18n/useT';
 import { PencilIcon, TrashIcon, EyeIcon, EyeOffIcon } from '../shared/Icons';
+import { useDragContext } from '../../context/DragContext';
 
 interface WordPairRowProps {
   pair: WordPair;
+  showSection?: boolean;
+  sections?: Section[];
 }
 
-export function WordPairRow({ pair }: WordPairRowProps) {
+export function WordPairRow({ pair, showSection, sections }: WordPairRowProps) {
   const { updateWordPair, deleteWordPair } = useDataStore();
+  const { draggingPairId, setDraggingPairId } = useDragContext();
   const t = useT();
   const [editing, setEditing] = useState(false);
   const [source, setSource] = useState(pair.source);
@@ -51,6 +55,11 @@ export function WordPairRow({ pair }: WordPairRowProps) {
             className="w-full"
           />
         </td>
+        {showSection && (
+          <td className="px-4 py-2 text-xs text-gray-400 dark:text-gray-500">
+            {sections?.find((s) => s.id === pair.section_id)?.name ?? '—'}
+          </td>
+        )}
         <td className="px-4 py-2 text-right">
           <div className="flex gap-2 justify-end">
             <Button variant="text" textColor="green" size="xs" onClick={handleSave}>{t.save}</Button>
@@ -63,10 +72,26 @@ export function WordPairRow({ pair }: WordPairRowProps) {
 
   const isDisabled = Boolean(pair.disabled);
 
+  const isDragging = draggingPairId === pair.id;
+
   return (
-    <tr className={`group hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 ${isDisabled ? 'opacity-40' : ''}`}>
+    <tr
+      draggable={true}
+      onDragStart={(e) => {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', String(pair.id));
+        setDraggingPairId(pair.id);
+      }}
+      onDragEnd={() => setDraggingPairId(null)}
+      className={`group hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 cursor-grab ${isDisabled ? 'opacity-40' : ''} ${isDragging ? 'opacity-50' : ''}`}
+    >
       <td className="px-4 py-2.5 text-sm text-gray-800 dark:text-gray-200">{pair.source}</td>
       <td className="px-4 py-2.5 text-sm text-gray-800 dark:text-gray-200">{pair.target}</td>
+      {showSection && (
+        <td className="px-4 py-2.5 text-xs text-gray-400 dark:text-gray-500">
+          {sections?.find((s) => s.id === pair.section_id)?.name ?? '—'}
+        </td>
+      )}
       <td className="px-4 py-2.5 text-right">
         <div className="flex gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
           <Button

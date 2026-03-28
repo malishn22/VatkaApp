@@ -199,14 +199,23 @@ export const useDataStore = create<DataState>((set, get) => ({
   },
 
   updateWordPair: async (id, data) => {
-    const pair = get().wordPairs.find((p) => p.id === id);
-    if (!pair) return;
-    const disabled = data.disabled !== undefined ? (data.disabled ? 1 : 0) : (pair.disabled ? 1 : 0);
-    await dbExecute(
-      'UPDATE word_pairs SET source = ?, target = ?, disabled = ? WHERE id = ?',
-      [data.source ?? pair.source, data.target ?? pair.target, disabled, id]
-    );
-    await get().fetchWordPairs(pair.level_id);
+    try {
+      const rows = await dbSelect<WordPair & { disabled: number | boolean }>(
+        'SELECT * FROM word_pairs WHERE id = ?', [id]
+      );
+      if (!rows[0]) return;
+      const pair = { ...rows[0], disabled: Boolean(rows[0].disabled) };
+      const disabled = data.disabled !== undefined ? (data.disabled ? 1 : 0) : (pair.disabled ? 1 : 0);
+      const newLevelId = data.level_id ?? pair.level_id;
+      const newSectionId = 'section_id' in data ? data.section_id : pair.section_id;
+      await dbExecute(
+        'UPDATE word_pairs SET source = ?, target = ?, disabled = ?, level_id = ?, section_id = ? WHERE id = ?',
+        [data.source ?? pair.source, data.target ?? pair.target, disabled, newLevelId, newSectionId, id]
+      );
+      await get().fetchWordPairs(newLevelId);
+    } catch (e) {
+      set({ error: String(e) });
+    }
   },
 
   deleteWordPair: async (id) => {

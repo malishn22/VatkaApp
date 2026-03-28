@@ -17,6 +17,7 @@ export interface Language {
 export interface Level {
   id: number;
   language_id: number;
+  section_id: number | null;
   name: string;
   position: number;
   created_at?: string;

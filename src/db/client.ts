@@ -28,7 +28,6 @@ export async function runMigrations(): Promise<void> {
     // Column already exists — safe to ignore
   }
   try {
-    await dbExecute('DROP TABLE IF EXISTS sections');
     await dbExecute(
       `CREATE TABLE IF NOT EXISTS sections (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -63,6 +63,7 @@ export const translations = {
     deleteWordPairMessage: (source: string, target: string) => `Delete "${source} → ${target}"?`,
 
     // Sections
+    section: 'Section',
     addSection: '+ Add Section',
     noSectionsYet: 'No sections yet.',
     addSectionTitle: 'Add Section',
@@ -200,6 +201,7 @@ export const translations = {
     deleteWordPairMessage: (source: string, target: string) => `"${source} → ${target}" silinsin mi?`,
 
     // Sections
+    section: 'Bölüm',
     addSection: '+ Bölüm Ekle',
     noSectionsYet: 'Henüz bölüm yok.',
     addSectionTitle: 'Bölüm Ekle',
