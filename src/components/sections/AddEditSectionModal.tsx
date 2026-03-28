@@ -3,36 +3,36 @@ import { Modal } from '../shared/Modal';
 import { Input } from '../shared/Input';
 import { Button } from '../shared/Button';
 import { useDataStore } from '../../store/dataStore';
-import type { Level } from '../../types';
+import type { Section } from '../../types';
 import { useT } from '../../i18n/useT';
 
-interface AddEditLevelModalProps {
+interface AddEditSectionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  languageId: number;
-  sectionId?: number | null;
-  level?: Level; // if provided, edit mode
+  levelId: number;
+  section?: Section;
 }
 
-export function AddEditLevelModal({ isOpen, onClose, languageId, sectionId, level }: AddEditLevelModalProps) {
-  const { addLevel, updateLevel, levels } = useDataStore();
+export function AddEditSectionModal({ isOpen, onClose, levelId, section }: AddEditSectionModalProps) {
+  const { addSection, updateSection, sections } = useDataStore();
   const t = useT();
   const [name, setName] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (isOpen) {
-      setName(level?.name ?? '');
+      setName(section?.name ?? '');
       setError('');
     }
-  }, [isOpen, level]);
+  }, [isOpen, section]);
 
   const handleSubmit = async () => {
     if (!name.trim()) { setError(t.nameIsRequired); return; }
-    if (level) {
-      await updateLevel(level.id, { name: name.trim() });
+    if (section) {
+      await updateSection(section.id, { name: name.trim() });
     } else {
-      await addLevel({ language_id: languageId, section_id: sectionId ?? null, name: name.trim(), position: levels.length });
+      const levelSections = sections.filter((s) => s.level_id === levelId);
+      await addSection({ level_id: levelId, name: name.trim(), position: levelSections.length });
     }
     onClose();
   };
@@ -41,17 +41,17 @@ export function AddEditLevelModal({ isOpen, onClose, languageId, sectionId, leve
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={level ? t.editLevelTitle : t.addLevelTitle}
+      title={section ? t.editSectionTitle : t.addSectionTitle}
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>{t.cancel}</Button>
-          <Button onClick={handleSubmit}>{level ? t.save : t.add}</Button>
+          <Button onClick={handleSubmit}>{section ? t.save : t.add}</Button>
         </>
       }
     >
       <Input
-        label={t.levelName}
-        placeholder={t.levelNamePlaceholder}
+        label={t.sectionName}
+        placeholder={t.sectionNamePlaceholder}
         value={name}
         onChange={(e) => setName(e.target.value)}
         error={error}

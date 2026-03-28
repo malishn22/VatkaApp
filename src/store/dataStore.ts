@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import { dbSelect, dbExecute } from '../db/client';
-import type { Language, Level, WordPair } from '../types';
+import type { Language, Level, Section, WordPair } from '../types';
 
 interface DataState {
   languages: Language[];
+  sections: Section[];
   levels: Level[];
   wordPairs: WordPair[];
   isLoading: boolean;
@@ -14,6 +15,12 @@ interface DataState {
   addLanguage: (data: Omit<Language, 'id' | 'created_at'>) => Promise<void>;
   updateLanguage: (id: number, data: Partial<Omit<Language, 'id' | 'created_at'>>) => Promise<void>;
   deleteLanguage: (id: number) => Promise<void>;
+
+  // Sections
+  fetchSections: (levelId: number) => Promise<void>;
+  addSection: (data: Omit<Section, 'id' | 'created_at'>) => Promise<void>;
+  updateSection: (id: number, data: Partial<Omit<Section, 'id' | 'created_at'>>) => Promise<void>;
+  deleteSection: (id: number) => Promise<void>;
 
   // Levels
   fetchLevels: (languageId: number) => Promise<void>;
@@ -31,6 +38,7 @@ interface DataState {
 
 export const useDataStore = create<DataState>((set, get) => ({
   languages: [],
+  sections: [],
   levels: [],
   wordPairs: [],
   isLoading: false,
@@ -68,10 +76,59 @@ export const useDataStore = create<DataState>((set, get) => ({
     set((state) => ({
       languages: state.languages.filter((l) => l.id !== id),
       levels: state.levels.filter((l) => l.language_id !== id),
+      sections: state.sections.filter((s) =>
+        !state.levels.filter((l) => l.language_id === id).find((l) => l.id === s.level_id)
+      ),
       wordPairs: state.wordPairs.filter(
         (wp) => !state.levels.filter((l) => l.language_id === id).find((l) => l.id === wp.level_id)
       ),
     }));
+  },
+
+  // --- Sections ---
+  fetchSections: async (levelId) => {
+    try {
+      const sections = await dbSelect<Section>(
+        'SELECT * FROM sections WHERE level_id = ? ORDER BY position, name',
+        [levelId]
+      );
+      // Merge: replace sections for this level, keep sections for other levels
+      set((state) => ({
+        sections: [
+          ...state.sections.filter((s) => s.level_id !== levelId),
+          ...sections,
+        ],
+      }));
+    } catch (e) {
+      set({ error: String(e) });
+    }
+  },
+
+  addSection: async (data) => {
+    await dbExecute(
+      'INSERT INTO sections (level_id, name, position) VALUES (?, ?, ?)',
+      [data.level_id, data.name, data.position]
+    );
+    await get().fetchSections(data.level_id);
+  },
+
+  updateSection: async (id, data) => {
+    const section = get().sections.find((s) => s.id === id);
+    if (!section) return;
+    await dbExecute(
+      'UPDATE sections SET name = ?, position = ? WHERE id = ?',
+      [data.name ?? section.name, data.position ?? section.position, id]
+    );
+    await get().fetchSections(section.level_id);
+  },
+
+  deleteSection: async (id) => {
+    const section = get().sections.find((s) => s.id === id);
+    if (!section) return;
+    await dbExecute('DELETE FROM sections WHERE id = ?', [id]);
+    set((state) => ({ sections: state.sections.filter((s) => s.id !== id) }));
+    // Re-fetch word pairs so section_id becomes null on affected pairs
+    await get().fetchWordPairs(section.level_id);
   },
 
   // --- Levels ---
@@ -112,9 +169,9 @@ export const useDataStore = create<DataState>((set, get) => ({
     await dbExecute('DELETE FROM levels WHERE id = ?', [id]);
     set((state) => ({
       levels: state.levels.filter((l) => l.id !== id),
+      sections: state.sections.filter((s) => s.level_id !== id),
       wordPairs: state.wordPairs.filter((wp) => wp.level_id !== id),
     }));
-    // Re-fetch levels for this language to keep in sync
     await get().fetchLevels(level.language_id);
   },
 
@@ -126,7 +183,7 @@ export const useDataStore = create<DataState>((set, get) => ({
         'SELECT * FROM word_pairs WHERE level_id = ? ORDER BY id',
         [levelId]
       );
-      const wordPairs = rows.map((r) => ({ ...r, disabled: Boolean(r.disabled) }));
+      const wordPairs = rows.map((r) => ({ ...r, disabled: Boolean(r.disabled), section_id: r.section_id ?? null }));
       set({ wordPairs, isLoading: false });
     } catch (e) {
       set({ error: String(e), isLoading: false });
@@ -135,8 +192,8 @@ export const useDataStore = create<DataState>((set, get) => ({
 
   addWordPair: async (data) => {
     await dbExecute(
-      'INSERT INTO word_pairs (level_id, source, target) VALUES (?, ?, ?)',
-      [data.level_id, data.source, data.target]
+      'INSERT INTO word_pairs (level_id, section_id, source, target) VALUES (?, ?, ?, ?)',
+      [data.level_id, data.section_id ?? null, data.source, data.target]
     );
     await get().fetchWordPairs(data.level_id);
   },

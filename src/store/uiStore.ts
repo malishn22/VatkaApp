@@ -8,12 +8,14 @@ interface UIState {
   currentView: View;
   selectedLanguageId: number | null;
   selectedLevelId: number | null;
+  selectedSectionId: number | null;
   isDark: boolean;
   lang: Lang;
   favoriteLanguages: string[];
   setView: (view: View) => void;
   setSelectedLanguage: (id: number | null) => void;
   setSelectedLevel: (id: number | null) => void;
+  setSelectedSection: (id: number | null) => void;
   toggleDark: () => void;
   setLang: (lang: Lang) => void;
   toggleFavoriteLanguage: (lang: string) => void;
@@ -25,12 +27,14 @@ export const useUIStore = create<UIState>()(
       currentView: 'languages',
       selectedLanguageId: null,
       selectedLevelId: null,
+      selectedSectionId: null,
       isDark: true,
       lang: 'en',
       favoriteLanguages: [],
       setView: (view) => set({ currentView: view }),
-      setSelectedLanguage: (id) => set({ selectedLanguageId: id, selectedLevelId: null, currentView: id ? 'wordpairs' : 'languages' }),
-      setSelectedLevel: (id) => set({ selectedLevelId: id, currentView: id ? 'wordpairs' : 'languages' }),
+      setSelectedLanguage: (id) => set({ selectedLanguageId: id, selectedLevelId: null, selectedSectionId: null, currentView: id ? 'wordpairs' : 'languages' }),
+      setSelectedLevel: (id) => set({ selectedLevelId: id, selectedSectionId: null, currentView: id ? 'wordpairs' : 'languages' }),
+      setSelectedSection: (id) => set({ selectedSectionId: id }),
       toggleDark: () => set((state) => {
         const next = !state.isDark;
         document.documentElement.classList.toggle('dark', next);

@@ -3,7 +3,7 @@ import { useUIStore } from '../../store/uiStore';
 import { useDataStore } from '../../store/dataStore';
 import { Button } from '../shared/Button';
 import { Dropdown } from '../shared/Dropdown';
-import { LevelList } from '../levels/LevelList';
+import { SectionedLevelList } from '../sections/SectionedLevelList';
 import { useT } from '../../i18n/useT';
 
 export function Sidebar() {
@@ -36,7 +36,7 @@ export function Sidebar() {
 
       <div className="flex-1 overflow-y-auto p-3">
         {selectedLanguageId !== null && (
-          <LevelList
+          <SectionedLevelList
             levels={levels.filter((l) => l.language_id === selectedLanguageId)}
             languageId={selectedLanguageId}
           />

@@ -8,13 +8,14 @@ import { Button } from '../shared/Button';
 import { useT } from '../../i18n/useT';
 
 export function WordPairsView() {
-  const { selectedLevelId, selectedLanguageId, setView } = useUIStore();
-  const { levels, languages, wordPairs, fetchWordPairs } = useDataStore();
+  const { selectedLevelId, selectedSectionId, selectedLanguageId, setView } = useUIStore();
+  const { levels, languages, sections, wordPairs, fetchWordPairs } = useDataStore();
   const { initGame } = usePlayStore();
   const t = useT();
 
   const level = levels.find((l) => l.id === selectedLevelId);
   const language = languages.find((l) => l.id === selectedLanguageId);
+  const section = sections.find((s) => s.id === selectedSectionId);
 
   useEffect(() => {
     if (selectedLevelId !== null) {
@@ -22,7 +23,11 @@ export function WordPairsView() {
     }
   }, [selectedLevelId]);
 
-  const activePairs = wordPairs.filter((p) => !p.disabled);
+  const displayedPairs = selectedSectionId !== null
+    ? wordPairs.filter((p) => p.section_id === selectedSectionId)
+    : wordPairs;
+
+  const activePairs = displayedPairs.filter((p) => !p.disabled);
 
   const handlePlay = () => {
     if (activePairs.length < 2) return;
@@ -43,9 +48,11 @@ export function WordPairsView() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{language?.name}</p>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50">{level.name}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
+            {level.name}{section ? ` — ${section.name}` : ''}
+          </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {wordPairs.length} {wordPairs.length !== 1 ? t.wordPairs : t.wordPair}
+            {displayedPairs.length} {displayedPairs.length !== 1 ? t.wordPairs : t.wordPair}
           </p>
         </div>
         <Button
@@ -57,7 +64,7 @@ export function WordPairsView() {
         </Button>
       </div>
 
-      {wordPairs.length === 0 ? (
+      {displayedPairs.length === 0 ? (
         <div className="text-center py-8 text-gray-400 dark:text-gray-500">
           <p>{t.noWordPairsYet}</p>
         </div>
@@ -76,7 +83,7 @@ export function WordPairsView() {
               </tr>
             </thead>
             <tbody>
-              {wordPairs.map((pair) => (
+              {displayedPairs.map((pair) => (
                 <WordPairRow key={pair.id} pair={pair} />
               ))}
             </tbody>
@@ -86,6 +93,7 @@ export function WordPairsView() {
 
       <AddWordPairForm
         levelId={level.id}
+        sectionId={selectedSectionId}
         sourceLabel={language?.source ?? t.source}
         targetLabel={language?.target ?? t.target}
       />

@@ -17,7 +17,7 @@ const variantClasses: Record<Variant, string> = {
   danger: 'bg-red-600 hover:bg-red-700 text-white',
   ghost: 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300',
   text: '',   // color handled by textColorClasses below
-  icon: 'text-gray-400 p-0.5 rounded transition-colors', // hoverColor handled below
+  icon: 'text-gray-400 p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors', // hoverColor handled below
 };
 
 const sizeClasses: Record<Size, string> = {

@@ -27,4 +27,25 @@ export async function runMigrations(): Promise<void> {
   } catch {
     // Column already exists — safe to ignore
   }
+  try {
+    await dbExecute('DROP TABLE IF EXISTS sections');
+    await dbExecute(
+      `CREATE TABLE IF NOT EXISTS sections (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        level_id INTEGER NOT NULL REFERENCES levels(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        position INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT DEFAULT (datetime('now'))
+      )`
+    );
+  } catch {
+    // Safe to ignore
+  }
+  try {
+    await dbExecute(
+      'ALTER TABLE word_pairs ADD COLUMN section_id INTEGER REFERENCES sections(id) ON DELETE SET NULL'
+    );
+  } catch {
+    // Column already exists — safe to ignore
+  }
 }

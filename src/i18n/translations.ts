@@ -62,9 +62,20 @@ export const translations = {
     deleteWordPairTitle: 'Delete Word Pair',
     deleteWordPairMessage: (source: string, target: string) => `Delete "${source} → ${target}"?`,
 
+    // Sections
+    addSection: '+ Add Section',
+    noSectionsYet: 'No sections yet.',
+    addSectionTitle: 'Add Section',
+    editSectionTitle: 'Edit Section',
+    sectionName: 'Section name',
+    sectionNamePlaceholder: 'e.g. Chapter 1, Grammar, Vocabulary',
+    deleteSectionTitle: 'Delete Section',
+    deleteSectionMessage: (name: string) => `Delete "${name}"? Levels in this section will become unsectioned.`,
+    unsectioned: 'Unsectioned',
+
     // Levels
     levels: 'LEVELS',
-    addLevel: '+ Add',
+    addLevel: '+ Add Level',
     noLevelsYet: 'No levels yet.',
     addLevelTitle: 'Add Level',
     editLevelTitle: 'Edit Level',
@@ -188,9 +199,20 @@ export const translations = {
     deleteWordPairTitle: 'Kelime Çiftini Sil',
     deleteWordPairMessage: (source: string, target: string) => `"${source} → ${target}" silinsin mi?`,
 
+    // Sections
+    addSection: '+ Bölüm Ekle',
+    noSectionsYet: 'Henüz bölüm yok.',
+    addSectionTitle: 'Bölüm Ekle',
+    editSectionTitle: 'Bölümü Düzenle',
+    sectionName: 'Bölüm adı',
+    sectionNamePlaceholder: 'örn. Bölüm 1, Dilbilgisi, Kelime',
+    deleteSectionTitle: 'Bölümü Sil',
+    deleteSectionMessage: (name: string) => `"${name}" silinsin mi? Bu bölümdeki seviyeler bölümsüz kalacak.`,
+    unsectioned: 'Bölümsüz',
+
     // Levels
     levels: 'SEVİYELER',
-    addLevel: '+ Ekle',
+    addLevel: '+ Seviye Ekle',
     noLevelsYet: 'Henüz seviye yok.',
     addLevelTitle: 'Seviye Ekle',
     editLevelTitle: 'Seviyeyi Düzenle',

@@ -8,11 +8,12 @@ import { useExcelImport } from '../../hooks/useExcelImport';
 
 interface AddWordPairFormProps {
   levelId: number;
+  sectionId: number | null;
   sourceLabel: string;
   targetLabel: string;
 }
 
-export function AddWordPairForm({ levelId, sourceLabel, targetLabel }: AddWordPairFormProps) {
+export function AddWordPairForm({ levelId, sectionId, sourceLabel, targetLabel }: AddWordPairFormProps) {
   const { addWordPair, levels, wordPairExistsInLanguage } = useDataStore();
   const t = useT();
   const [source, setSource] = useState('');
@@ -32,7 +33,7 @@ export function AddWordPairForm({ levelId, sourceLabel, targetLabel }: AddWordPa
     for (const { source, target } of rows) {
       const exists = await wordPairExistsInLanguage(level.language_id, source, target);
       if (exists) { skipped++; continue; }
-      await addWordPair({ level_id: levelId, source, target });
+      await addWordPair({ level_id: levelId, section_id: sectionId, source, target });
       imported++;
     }
     setImporting(false);
@@ -53,7 +54,7 @@ export function AddWordPairForm({ levelId, sourceLabel, targetLabel }: AddWordPa
       const exists = await wordPairExistsInLanguage(level.language_id, source.trim(), target.trim());
       if (exists) { setError(t.wordPairAlreadyExists); return; }
     }
-    await addWordPair({ level_id: levelId, source: source.trim(), target: target.trim() });
+    await addWordPair({ level_id: levelId, section_id: sectionId, source: source.trim(), target: target.trim() });
     setSource('');
     setTarget('');
     setError('');
