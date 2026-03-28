@@ -11,7 +11,7 @@ interface AddLanguageModalProps {
 }
 
 export function AddLanguageModal({ isOpen, onClose }: AddLanguageModalProps) {
-  const { addLanguage } = useDataStore();
+  const { addLanguage, languages } = useDataStore();
   const t = useT();
   const [source, setSource] = useState('');
   const [target, setTarget] = useState('');
@@ -29,6 +29,10 @@ export function AddLanguageModal({ isOpen, onClose }: AddLanguageModalProps) {
     if (!target) e.target = t.required;
     if (source && target && source === target) { e.target = t.mustDifferFromSource; }
     if (!name.trim()) e.name = t.required;
+    if (source && target && source !== target) {
+      const duplicate = languages.find((l) => l.source === source && l.target === target);
+      if (duplicate) e.name = t.languageAlreadyExists;
+    }
     return e;
   };
 

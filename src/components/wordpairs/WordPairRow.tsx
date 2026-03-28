@@ -4,7 +4,7 @@ import { Button } from '../shared/Button';
 import { Input } from '../shared/Input';
 import type { WordPair } from '../../types';
 import { useT } from '../../i18n/useT';
-import { PencilIcon, TrashIcon } from '../shared/Icons';
+import { PencilIcon, TrashIcon, EyeIcon, EyeOffIcon } from '../shared/Icons';
 
 interface WordPairRowProps {
   pair: WordPair;
@@ -61,12 +61,22 @@ export function WordPairRow({ pair }: WordPairRowProps) {
     );
   }
 
+  const isDisabled = Boolean(pair.disabled);
+
   return (
-    <tr className="group hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700">
+    <tr className={`group hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 ${isDisabled ? 'opacity-40' : ''}`}>
       <td className="px-4 py-2.5 text-sm text-gray-800 dark:text-gray-200">{pair.source}</td>
       <td className="px-4 py-2.5 text-sm text-gray-800 dark:text-gray-200">{pair.target}</td>
       <td className="px-4 py-2.5 text-right">
         <div className="flex gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="icon"
+            hoverColor="indigo"
+            onClick={() => updateWordPair(pair.id, { disabled: !isDisabled })}
+            title={isDisabled ? t.enablePair : t.disablePair}
+          >
+            {isDisabled ? <EyeOffIcon /> : <EyeIcon />}
+          </Button>
           <Button variant="icon" hoverColor="indigo" onClick={() => setEditing(true)} title={t.edit}>
             <PencilIcon />
           </Button>

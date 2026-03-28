@@ -26,6 +26,7 @@ interface DataState {
   addWordPair: (data: Omit<WordPair, 'id' | 'created_at'>) => Promise<void>;
   updateWordPair: (id: number, data: Partial<Omit<WordPair, 'id' | 'created_at'>>) => Promise<void>;
   deleteWordPair: (id: number) => Promise<void>;
+  wordPairExistsInLanguage: (languageId: number, source: string, target: string) => Promise<boolean>;
 }
 
 export const useDataStore = create<DataState>((set, get) => ({
@@ -121,10 +122,11 @@ export const useDataStore = create<DataState>((set, get) => ({
   fetchWordPairs: async (levelId) => {
     set({ isLoading: true, error: null });
     try {
-      const wordPairs = await dbSelect<WordPair>(
+      const rows = await dbSelect<WordPair & { disabled: number | boolean }>(
         'SELECT * FROM word_pairs WHERE level_id = ? ORDER BY id',
         [levelId]
       );
+      const wordPairs = rows.map((r) => ({ ...r, disabled: Boolean(r.disabled) }));
       set({ wordPairs, isLoading: false });
     } catch (e) {
       set({ error: String(e), isLoading: false });
@@ -142,9 +144,10 @@ export const useDataStore = create<DataState>((set, get) => ({
   updateWordPair: async (id, data) => {
     const pair = get().wordPairs.find((p) => p.id === id);
     if (!pair) return;
+    const disabled = data.disabled !== undefined ? (data.disabled ? 1 : 0) : (pair.disabled ? 1 : 0);
     await dbExecute(
-      'UPDATE word_pairs SET source = ?, target = ? WHERE id = ?',
-      [data.source ?? pair.source, data.target ?? pair.target, id]
+      'UPDATE word_pairs SET source = ?, target = ?, disabled = ? WHERE id = ?',
+      [data.source ?? pair.source, data.target ?? pair.target, disabled, id]
     );
     await get().fetchWordPairs(pair.level_id);
   },
@@ -156,5 +159,18 @@ export const useDataStore = create<DataState>((set, get) => ({
     set((state) => ({
       wordPairs: state.wordPairs.filter((p) => p.id !== id),
     }));
+  },
+
+  wordPairExistsInLanguage: async (languageId, source, target) => {
+    const rows = await dbSelect<{ found: number }>(
+      `SELECT 1 AS found FROM word_pairs wp
+       JOIN levels l ON wp.level_id = l.id
+       WHERE l.language_id = ?
+         AND LOWER(TRIM(wp.source)) = LOWER(TRIM(?))
+         AND LOWER(TRIM(wp.target)) = LOWER(TRIM(?))
+       LIMIT 1`,
+      [languageId, source, target]
+    );
+    return rows.length > 0;
   },
 }));

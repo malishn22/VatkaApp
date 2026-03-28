@@ -47,8 +47,16 @@ export const translations = {
     bothFieldsRequired: 'Both fields are required',
     wordIn: (lang: string) => `Word in ${lang}`,
     add: 'Add',
+    importExcel: 'Import Excel',
+    importing: 'Importing...',
+    importResult: (count: number, skipped: number) =>
+      skipped > 0
+        ? `Imported ${count} pairs, ${skipped} skipped (duplicates)`
+        : `Imported ${count} pairs`,
 
     // Word pair row
+    enablePair: 'Show in play mode',
+    disablePair: 'Hide from play mode',
     save: 'Save',
     cancel: 'Cancel',
     deleteWordPairTitle: 'Delete Word Pair',
@@ -87,6 +95,12 @@ export const translations = {
     settingsTitle: 'Settings',
     darkMode: 'Dark Mode',
     language: 'Language',
+    favoriteLanguages: 'Favorite Languages',
+    favoriteLanguagesHint: 'These will appear at the top of language dropdowns.',
+    addFavorite: 'Add a language...',
+    removeFavorite: 'Remove',
+    languageAlreadyExists: 'This language pair already exists.',
+    wordPairAlreadyExists: 'This word pair already exists in this language.',
 
     // Language names (for dropdown labels)
     languageNames: {
@@ -159,8 +173,16 @@ export const translations = {
     bothFieldsRequired: 'Her iki alan da zorunlu',
     wordIn: (lang: string) => `${lang} dilinde kelime`,
     add: 'Ekle',
+    importExcel: 'Excel İçe Aktar',
+    importing: 'İçe aktarılıyor...',
+    importResult: (count: number, skipped: number) =>
+      skipped > 0
+        ? `${count} çift içe aktarıldı, ${skipped} atlandı (tekrar)`
+        : `${count} çift içe aktarıldı`,
 
     // Word pair row
+    enablePair: 'Oyun modunda göster',
+    disablePair: 'Oyun modundan gizle',
     save: 'Kaydet',
     cancel: 'İptal',
     deleteWordPairTitle: 'Kelime Çiftini Sil',
@@ -199,6 +221,12 @@ export const translations = {
     settingsTitle: 'Ayarlar',
     darkMode: 'Karanlık Mod',
     language: 'Dil',
+    favoriteLanguages: 'Favori Diller',
+    favoriteLanguagesHint: 'Bu diller, dil açılır menülerinin üstünde görünür.',
+    addFavorite: 'Dil ekle...',
+    removeFavorite: 'Kaldır',
+    languageAlreadyExists: 'Bu dil çifti zaten mevcut.',
+    wordPairAlreadyExists: 'Bu kelime çifti bu dilde zaten mevcut.',
 
     // Language names (for dropdown labels)
     languageNames: {

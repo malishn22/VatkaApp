@@ -10,21 +10,24 @@ interface UIState {
   selectedLevelId: number | null;
   isDark: boolean;
   lang: Lang;
+  favoriteLanguages: string[];
   setView: (view: View) => void;
   setSelectedLanguage: (id: number | null) => void;
   setSelectedLevel: (id: number | null) => void;
   toggleDark: () => void;
   setLang: (lang: Lang) => void;
+  toggleFavoriteLanguage: (lang: string) => void;
 }
 
 export const useUIStore = create<UIState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       currentView: 'languages',
       selectedLanguageId: null,
       selectedLevelId: null,
       isDark: true,
       lang: 'en',
+      favoriteLanguages: [],
       setView: (view) => set({ currentView: view }),
       setSelectedLanguage: (id) => set({ selectedLanguageId: id, selectedLevelId: null, currentView: id ? 'wordpairs' : 'languages' }),
       setSelectedLevel: (id) => set({ selectedLevelId: id, currentView: id ? 'wordpairs' : 'languages' }),
@@ -34,11 +37,18 @@ export const useUIStore = create<UIState>()(
         return { isDark: next };
       }),
       setLang: (lang) => set({ lang }),
+      toggleFavoriteLanguage: (lang) => {
+        const { favoriteLanguages } = get();
+        if (favoriteLanguages.includes(lang)) {
+          set({ favoriteLanguages: favoriteLanguages.filter((l) => l !== lang) });
+        } else {
+          set({ favoriteLanguages: [...favoriteLanguages, lang] });
+        }
+      },
     }),
     {
       name: 'ui-prefs',
-      // Only persist isDark and lang — navigation state should reset on reload
-      partialize: (state) => ({ isDark: state.isDark, lang: state.lang }),
+      partialize: (state) => ({ isDark: state.isDark, lang: state.lang, favoriteLanguages: state.favoriteLanguages }),
     }
   )
 );

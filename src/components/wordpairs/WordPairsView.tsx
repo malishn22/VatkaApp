@@ -22,9 +22,11 @@ export function WordPairsView() {
     }
   }, [selectedLevelId]);
 
+  const activePairs = wordPairs.filter((p) => !p.disabled);
+
   const handlePlay = () => {
-    if (wordPairs.length < 2) return;
-    initGame(wordPairs);
+    if (activePairs.length < 2) return;
+    initGame(activePairs);
     setView('play');
   };
 
@@ -48,8 +50,8 @@ export function WordPairsView() {
         </div>
         <Button
           onClick={handlePlay}
-          disabled={wordPairs.length < 2}
-          title={wordPairs.length < 2 ? t.needAtLeastTwoWordPairs : ''}
+          disabled={activePairs.length < 2}
+          title={activePairs.length < 2 ? t.needAtLeastTwoWordPairs : ''}
         >
           {t.play}
         </Button>

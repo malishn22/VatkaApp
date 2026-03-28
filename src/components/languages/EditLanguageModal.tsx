@@ -13,7 +13,7 @@ interface EditLanguageModalProps {
 }
 
 export function EditLanguageModal({ isOpen, onClose, language }: EditLanguageModalProps) {
-  const { updateLanguage } = useDataStore();
+  const { updateLanguage, languages } = useDataStore();
   const t = useT();
   const [source, setSource] = useState('');
   const [target, setTarget] = useState('');
@@ -35,6 +35,10 @@ export function EditLanguageModal({ isOpen, onClose, language }: EditLanguageMod
     if (!target) e.target = t.required;
     if (source && target && source === target) e.target = t.mustDifferFromSource;
     if (!name.trim()) e.name = t.required;
+    if (source && target && source !== target) {
+      const duplicate = languages.find((l) => l.id !== language.id && l.source === source && l.target === target);
+      if (duplicate) e.name = t.languageAlreadyExists;
+    }
     return e;
   };
 

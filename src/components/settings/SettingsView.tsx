@@ -1,10 +1,24 @@
+import { useState } from 'react';
 import { useUIStore } from '../../store/uiStore';
 import { Toggle } from '../shared/Toggle';
+import { Dropdown } from '../shared/Dropdown';
 import { useT } from '../../i18n/useT';
+import { KNOWN_LANGUAGES } from '../../constants/languages';
 
 export function SettingsView() {
-  const { isDark, toggleDark, lang, setLang } = useUIStore();
+  const { isDark, toggleDark, lang, setLang, favoriteLanguages, toggleFavoriteLanguage } = useUIStore();
   const t = useT();
+  const [addValue, setAddValue] = useState('');
+
+  const availableToAdd = KNOWN_LANGUAGES.filter((l) => !favoriteLanguages.includes(l));
+  const addOptions = availableToAdd.map((l) => ({ value: l, label: t.languageNames[l] ?? l }));
+
+  const handleAdd = (val: string) => {
+    if (val) {
+      toggleFavoriteLanguage(val);
+      setAddValue('');
+    }
+  };
 
   return (
     <div className="max-w-md">
@@ -37,6 +51,41 @@ export function SettingsView() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Favorite Languages */}
+      <div className="mt-6">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-50 mb-1">{t.favoriteLanguages}</h3>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{t.favoriteLanguagesHint}</p>
+
+        <Dropdown
+          options={addOptions}
+          value={addValue}
+          onChange={handleAdd}
+          placeholder={t.addFavorite}
+        />
+
+        {favoriteLanguages.length > 0 && (
+          <ul className="mt-3 flex flex-col gap-1">
+            {favoriteLanguages.map((lang) => (
+              <li
+                key={lang}
+                className="flex items-center justify-between px-3 py-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800"
+              >
+                <span className="text-sm font-medium text-indigo-800 dark:text-indigo-200">
+                  {t.languageNames[lang] ?? lang}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => toggleFavoriteLanguage(lang)}
+                  className="text-xs text-indigo-400 dark:text-indigo-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+                >
+                  ✕
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

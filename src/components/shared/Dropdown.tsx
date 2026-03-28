@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDownIcon } from './Icons';
+import { ChevronDownIcon, StarIcon } from './Icons';
 
 interface DropdownProps {
   options: { value: string; label: string }[];
@@ -10,9 +10,10 @@ interface DropdownProps {
   error?: string;
   className?: string;
   id?: string;
+  markedValues?: string[];
 }
 
-export function Dropdown({ options, value, onChange, placeholder, label, error, className = '', id }: DropdownProps) {
+export function Dropdown({ options, value, onChange, placeholder, label, error, className = '', id, markedValues }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const ref = useRef<HTMLDivElement>(null);
@@ -38,9 +39,12 @@ export function Dropdown({ options, value, onChange, placeholder, label, error, 
     }
   }, [open]);
 
-  const filtered = options.filter((o) =>
-    o.label.toLowerCase().includes(query.toLowerCase())
-  );
+  const filtered = options.filter((o) => {
+    const matches = (str: string) =>
+      str.toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr')) ||
+      str.toLocaleLowerCase('en').includes(query.toLocaleLowerCase('en'));
+    return matches(o.label) || matches(o.value);
+  });
 
   const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-');
 
@@ -96,7 +100,12 @@ export function Dropdown({ options, value, onChange, placeholder, label, error, 
                   }`}
                   onClick={() => { onChange(opt.value); setOpen(false); }}
                 >
-                  {opt.label}
+                  <span className="flex items-center gap-1.5">
+                    {markedValues?.includes(opt.value) && (
+                      <StarIcon className="text-amber-400 flex-shrink-0" />
+                    )}
+                    {opt.label}
+                  </span>
                 </button>
               ))
             ) : (

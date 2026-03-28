@@ -19,5 +19,6 @@ export interface WordPair {
   level_id: number;
   source: string;
   target: string;
+  disabled?: boolean;
   created_at?: string;
 }
