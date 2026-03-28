@@ -15,9 +15,10 @@ export function AddLanguageModal({ isOpen, onClose }: AddLanguageModalProps) {
   const [target, setTarget] = useState('');
   const [name, setName] = useState('');
   const [errors, setErrors] = useState<{ source?: string; target?: string; name?: string }>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isOpen) { setSource(''); setTarget(''); setName(''); setErrors({}); }
+    if (isOpen) { setSource(''); setTarget(''); setName(''); setErrors({}); setSubmitError(null); }
   }, [isOpen]);
 
   const validate = () => {
@@ -32,8 +33,12 @@ export function AddLanguageModal({ isOpen, onClose }: AddLanguageModalProps) {
   const handleSubmit = async () => {
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
-    await addLanguage({ name: name.trim(), source, target });
-    onClose();
+    try {
+      await addLanguage({ name: name.trim(), source, target });
+      onClose();
+    } catch (err) {
+      setSubmitError(String(err));
+    }
   };
 
   return (
@@ -53,6 +58,9 @@ export function AddLanguageModal({ isOpen, onClose }: AddLanguageModalProps) {
         onSourceChange={setSource} onTargetChange={setTarget} onNameChange={setName}
         errors={errors}
       />
+      {submitError && (
+        <p className="text-sm text-red-600 mt-1">{submitError}</p>
+      )}
     </Modal>
   );
 }

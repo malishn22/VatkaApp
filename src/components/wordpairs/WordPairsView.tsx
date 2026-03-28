@@ -35,7 +35,7 @@ export function WordPairsView() {
   }
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{language?.name}</p>
